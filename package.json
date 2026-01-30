@@ -1,0 +1,27 @@
+{
+  "name": "cossui-admin-starter",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "bash scripts/dev.sh",
+    "build": "pnpm -r --if-present build",
+    "clean": "bash scripts/clean.sh"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^20",
+    "concurrently": "^9.2.1",
+    "prettier": "^3.7.4",
+    "tailwindcss": "^4.1.18",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "sonner": "^2.0.7",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

@@ -1,0 +1,22 @@
+// 通用组件导出索引文件
+// 用于内部引用，避免循环依赖
+
+export { Label, LabelField } from './Label'
+export { Input } from './Input'
+export { Button } from './Button'
+export { Select } from './Select'
+export { DictSelect } from './DictSelect'
+export type { DictSelectProps, DictSelectOption } from './DictSelect'
+export { StatusBadge } from './StatusBadge'
+export { Pagination } from './Pagination'
+export { Table } from './Table'
+export type { TableColumn } from './Table'
+export { Modal } from './Modal'
+export { DialogBox } from './FormDialog'
+export type { DialogBoxProps } from './FormDialog'
+export { Drawer } from './Drawer'
+export type { DrawerProps } from './Drawer'
+export { Forbidden } from './Forbidden'
+export type { ForbiddenProps } from './Forbidden'
+export { default as TreeSelector } from './TreeSelector'
+export type { TreeSelectorProps, TreeSelectorOption } from './TreeSelector'
