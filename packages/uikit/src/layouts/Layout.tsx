@@ -176,7 +176,10 @@ export default function Layout({
         </aside>
 
         {/* 主内容区 */}
-        <main className="flex flex-col overflow-hidden flex-1 min-w-0 w-full transition-[margin] duration-300 ease-[cubic-bezier(0.22,0.67,0.38,0.95)]">
+        <main 
+          className="flex flex-col overflow-hidden flex-1 min-w-0 w-full"
+          data-sidebar-main
+        >
           {/* 头部 */}
           <header className="bg-card shrink-0">
             <div

@@ -257,3 +257,13 @@ aside[data-collapsed="true"]:hover [data-slot="sidebar-menu-button"] {
   padding-right: 0.75rem;
   gap: 0.625rem;
 }
+
+/* hover 时主内容区轻微挤压效果 */
+main[data-sidebar-main] {
+  transform-origin: right center;
+  transition: transform 0.3s cubic-bezier(0.22, 0.67, 0.38, 0.95);
+}
+
+:has(> aside[data-collapsed="true"]:hover) main[data-sidebar-main] {
+  transform: scaleX(0.985) translateX(4px);
+}
