@@ -6,4 +6,4 @@
 export const DEFAULT_SIZE = 56
 
 /** 侧边栏展开宽度 */
-export const SIDEBAR_EXPANDED = 240
+export const SIDEBAR_EXPANDED = 220

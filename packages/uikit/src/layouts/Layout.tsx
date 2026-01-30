@@ -94,10 +94,15 @@ export default function Layout({
       onOpenChange={handleSidebarOpenChange}
     >
       <div className={`flex h-screen w-full bg-background ${className}`}>
-        {/* 侧边栏占位区域（保持布局，仅在点击展开时变宽） */}
+        {/* 侧边栏占位区域（保持布局） */}
         <div
-          className="flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.22,0.67,0.38,0.95)]"
-          style={{ width: effectiveOpen ? `${expanded}px` : `${collapsed}px` }}
+          className="flex-shrink-0"
+          style={{ 
+            // @ts-expect-error CSS custom properties
+            '--sidebar-expanded': `${expanded}px`,
+            width: effectiveOpen ? `${expanded}px` : `${collapsed}px` 
+          }}
+          data-sidebar-spacer
         />
 
         {/* 侧边栏（fixed 定位，支持 CSS hover 展开） */}
@@ -118,55 +123,58 @@ export default function Layout({
           // 纯 CSS hover 控制宽度（仅在收起状态下生效）
           data-collapsed={!effectiveOpen}
         >
-          {/* Logo */}
-          <div
-            className="flex items-center justify-center px-4 border-b shrink-0"
-            style={{
-              height: `${height}px`,
-              borderColor: 'var(--sidebar-border)'
-            }}
-          >
-            {logo}
-          </div>
+          {/* hover 触发区域：Logo + 菜单 + 版本信息 */}
+          <div className="flex flex-col flex-1 min-h-0" data-sidebar-hover-area>
+            {/* Logo */}
+            <div
+              className="flex items-center justify-center px-4 border-b shrink-0"
+              style={{
+                height: `${height}px`,
+                borderColor: 'var(--sidebar-border)'
+              }}
+            >
+              {logo}
+            </div>
 
-          {/* 菜单 */}
-          <div className="flex-1 overflow-auto px-[11px] py-3">
-            {loading || menus.length === 0 ? (
-              <AsideSkeleton />
-            ) : (
-              <nav className="space-y-px">
-                {menus.map((item, index) => {
-                  const isActive = isMenuActive(item)
-                  return (
-                    <MenuItemWrapper
-                      key={index}
-                      item={item}
-                      open={true}
-                      active={isActive}
-                      activePath={active}
-                      itemRender={itemRender}
-                      onMenuItemClick={onMenuItemClick}
-                      onNavigate={onNavigate}
-                      expandedMenu={expandedMenu}
-                      onToggleExpand={handleToggleExpand}
-                    />
-                  )
-                })}
-              </nav>
+            {/* 菜单 */}
+            <div className="flex-1 overflow-auto px-[11px] py-3">
+              {loading || menus.length === 0 ? (
+                <AsideSkeleton />
+              ) : (
+                <nav className="space-y-px">
+                  {menus.map((item, index) => {
+                    const isActive = isMenuActive(item)
+                    return (
+                      <MenuItemWrapper
+                        key={index}
+                        item={item}
+                        open={true}
+                        active={isActive}
+                        activePath={active}
+                        itemRender={itemRender}
+                        onMenuItemClick={onMenuItemClick}
+                        onNavigate={onNavigate}
+                        expandedMenu={expandedMenu}
+                        onToggleExpand={handleToggleExpand}
+                      />
+                    )
+                  })}
+                </nav>
+              )}
+            </div>
+
+            {/* 版本信息 */}
+            {version && (
+              <div
+                className="sidebar-menu-text px-4 py-3 border-t text-center text-xs text-sidebar-foreground/64"
+                style={{ borderColor: 'var(--sidebar-border)' }}
+              >
+                v{version}
+              </div>
             )}
           </div>
 
-          {/* 版本信息 */}
-          {version && (
-            <div
-              className="sidebar-menu-text px-4 py-3 border-t text-center text-xs text-sidebar-foreground/64"
-              style={{ borderColor: 'var(--sidebar-border)' }}
-            >
-              v{version}
-            </div>
-          )}
-
-          {/* 侧边栏展开/收起按钮 */}
+          {/* 侧边栏展开/收起按钮（不触发 hover 展开） */}
           <div
             className="px-[11px] py-3 border-t"
             style={{ borderColor: 'var(--sidebar-border)' }}

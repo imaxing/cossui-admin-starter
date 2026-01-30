@@ -142,10 +142,10 @@ export function MenuItemWrapper({
         ) : (
           <DefaultMenuItemContent item={item} open={open} active={isActive} />
         )}
-        {/* 箭头自动显示 */}
-        {hasChildren && open && (
+        {/* 箭头（收起状态下通过 CSS 隐藏） */}
+        {hasChildren && (
           <ChevronDownIcon
-            className={`h-3.5 w-3.5 shrink-0 transition-all duration-200 ease-in-out ${
+            className={`sidebar-menu-arrow h-3.5 w-3.5 shrink-0 transition-all duration-200 ease-in-out ${
               isActive
                 ? 'text-sidebar-foreground/64'
                 : 'text-sidebar-foreground/48 group-hover:text-sidebar-foreground/64'
@@ -168,9 +168,7 @@ export function MenuItemWrapper({
           }}
         >
           <div style={{ minHeight: 0 }}>
-            <SidebarMenuSub className="mt-px space-y-px pl-7 relative">
-              {/* Cloudflare 风格连接线 */}
-              <div className="absolute left-[19px] inset-y-px w-px bg-neutral-200 dark:bg-neutral-800 z-10"></div>
+            <SidebarMenuSub className="mt-px space-y-px pl-7">
               {item.children!.map((child, index) => {
                 const childActive =
                   child.path === activePath || child.name === activePath
