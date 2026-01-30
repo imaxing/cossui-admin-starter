@@ -1,163 +1,249 @@
 'use client'
 
-import React from 'react'
-import { ChakraProvider, createSystem, defaultConfig } from '@chakra-ui/react'
+import * as React from 'react'
+import { X, ChevronDown, Check } from 'lucide-react'
+import {
+  Select as SelectRoot,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '../ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { cn } from '../lib/utils'
 
-// 创建禁用 preflight 的 system，避免覆盖 Tailwind 样式
-const system = createSystem(defaultConfig, {
-  preflight: false
-})
-import { Select as ChakraSelect } from 'chakra-react-select'
-import type { MultiValue, SingleValue } from 'chakra-react-select'
-
-// 选项类型
 export interface SelectOption {
   label: string
   value: string | number
   disabled?: boolean
 }
 
-// Select 组件属性
-export interface SelectProps {
-  value?: string | number | (string | number)[]
-  defaultValue?: string | number | (string | number)[]
-  onChange?: (value: string | number | (string | number)[]) => void
+// 空值占位符，用于处理 Radix Select 不允许空字符串的问题
+const EMPTY_VALUE = '__empty__'
+
+function toInternalValue(val: string | number | undefined): string | undefined {
+  if (val === undefined) return undefined
+  return val === '' ? EMPTY_VALUE : String(val)
+}
+
+function toExternalValue(val: string): string {
+  return val === EMPTY_VALUE ? '' : val
+}
+
+// 单选模式 Props
+interface SingleSelectProps {
+  multiple?: false
+  value?: string | number
+  defaultValue?: string | number
+  onChange?: (value: string) => void
+}
+
+// 多选模式 Props
+interface MultiSelectProps {
+  multiple: true
+  value?: (string | number)[]
+  defaultValue?: (string | number)[]
+  onChange?: (value: (string | number)[]) => void
+  maxDisplay?: number
+}
+
+// 通用 Props
+interface BaseSelectProps {
   options?: SelectOption[]
   placeholder?: string
   disabled?: boolean
-  allowClear?: boolean
-  loading?: boolean
-  size?: 'small' | 'medium' | 'large'
-  mode?: 'multiple' | 'tags'
   className?: string
-  notFoundContent?: React.ReactNode
-  onClear?: () => void
 }
 
-export function Select({
+export type SelectProps = BaseSelectProps & (SingleSelectProps | MultiSelectProps)
+
+export function Select(props: SelectProps) {
+  const {
+    options = [],
+    placeholder = '请选择',
+    disabled = false,
+    className
+  } = props
+
+  if (props.multiple) {
+    return <MultiSelectInner {...props} options={options} placeholder={placeholder} disabled={disabled} className={className} />
+  }
+
+  return <SingleSelectInner {...props} options={options} placeholder={placeholder} disabled={disabled} className={className} />
+}
+
+// 单选组件
+function SingleSelectInner({
+  value,
+  defaultValue,
+  onChange,
+  options,
+  placeholder,
+  disabled,
+  className
+}: BaseSelectProps & SingleSelectProps) {
+  return (
+    <SelectRoot
+      value={toInternalValue(value)}
+      defaultValue={toInternalValue(defaultValue)}
+      onValueChange={(val) => onChange?.(toExternalValue(val))}
+      disabled={disabled}
+    >
+      <SelectTrigger className={cn('w-full', className)}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options?.map((opt) => (
+          <SelectItem
+            key={opt.value === '' ? EMPTY_VALUE : opt.value}
+            value={opt.value === '' ? EMPTY_VALUE : String(opt.value)}
+            disabled={opt.disabled}
+          >
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </SelectRoot>
+  )
+}
+
+// 多选组件
+function MultiSelectInner({
   value,
   defaultValue,
   onChange,
   options = [],
-  placeholder = '请选择',
-  disabled = false,
-  allowClear = false,
-  loading = false,
-  size = 'medium',
-  mode,
+  placeholder,
+  disabled,
   className,
-  notFoundContent = '暂无数据',
-  onClear
-}: SelectProps) {
-  const isMultiple = mode === 'multiple' || mode === 'tags'
-  const instanceId = React.useId()
+  maxDisplay = 4
+}: BaseSelectProps & MultiSelectProps) {
+  const [open, setOpen] = React.useState(false)
+  const [internalValue, setInternalValue] = React.useState<(string | number)[]>(
+    defaultValue || []
+  )
 
-  // 根据 size 获取样式配置
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          minHeight: '32px',
-          fontSize: '0.875rem',
-          padding: '0 8px'
-        }
-      case 'large':
-        return {
-          minHeight: '40px',
-          fontSize: '1rem',
-          padding: '0 16px'
-        }
-      default: // medium
-        return {
-          minHeight: '36px',
-          fontSize: '0.875rem',
-          padding: '0 12px'
-        }
+  const selectedValues = value !== undefined ? value : internalValue
+
+  const handleSelect = (optValue: string | number) => {
+    const newValue = selectedValues.includes(optValue)
+      ? selectedValues.filter((v) => v !== optValue)
+      : [...selectedValues, optValue]
+
+    if (value === undefined) {
+      setInternalValue(newValue)
     }
+    onChange?.(newValue)
   }
 
-  const sizeStyles = getSizeStyles()
-
-  // 转换值为 react-select 格式
-  const getValue = () => {
-    if (isMultiple) {
-      const arrayValue = Array.isArray(value) ? value : []
-      return options.filter((opt) => arrayValue.includes(opt.value))
+  const handleRemove = (e: React.MouseEvent, optValue: string | number) => {
+    e.stopPropagation()
+    const newValue = selectedValues.filter((v) => v !== optValue)
+    if (value === undefined) {
+      setInternalValue(newValue)
     }
-    return options.find((opt) => opt.value === value) || null
+    onChange?.(newValue)
   }
 
-  // 处理值变化
-  const handleChange = (
-    newValue: MultiValue<SelectOption> | SingleValue<SelectOption>
-  ) => {
-    if (isMultiple) {
-      const values = (newValue as MultiValue<SelectOption>).map((opt) => opt.value)
-      onChange?.(values)
-    } else {
-      const singleVal = newValue as SingleValue<SelectOption>
-      onChange?.(singleVal ? singleVal.value : '')
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (value === undefined) {
+      setInternalValue([])
     }
-
-    if (!newValue || (Array.isArray(newValue) && newValue.length === 0)) {
-      onClear?.()
-    }
+    onChange?.([])
   }
+
+  const selectedOptions = options.filter((opt) =>
+    selectedValues.includes(opt.value)
+  )
+
+  const displayOptions = selectedOptions.slice(0, maxDisplay)
+  const moreCount = selectedOptions.length - maxDisplay
 
   return (
-    <ChakraProvider value={system}>
-      <ChakraSelect<SelectOption, boolean>
-        instanceId={instanceId}
-        value={getValue()}
-        defaultValue={
-          defaultValue
-            ? isMultiple
-              ? options.filter((opt) =>
-                  (Array.isArray(defaultValue) ? defaultValue : []).includes(
-                    opt.value
-                  )
-                )
-              : options.find((opt) => opt.value === defaultValue)
-            : undefined
-        }
-        onChange={handleChange}
-        options={options}
-        isMulti={isMultiple}
-        isDisabled={disabled}
-        isClearable={allowClear}
-        isLoading={loading}
-        isSearchable
-        placeholder={placeholder}
-        noOptionsMessage={() => notFoundContent}
-        className={className}
-        classNamePrefix="chakra-react-select"
-        chakraStyles={{
-          container: (provided) => ({
-            ...provided,
-            _focusVisible: {
-              outline: 'none',
-              boxShadow: 'none'
-            }
-          }),
-          control: (provided) => ({
-            ...provided,
-            minHeight: sizeStyles.minHeight,
-            fontSize: sizeStyles.fontSize,
-            _focus: {
-              boxShadow: 'none',
-              borderColor: 'inherit'
-            },
-            _focusVisible: {
-              boxShadow: 'none',
-              borderColor: 'inherit'
-            }
-          }),
-          valueContainer: (provided) => ({
-            ...provided,
-            padding: sizeStyles.padding
-          })
-        }}
-      />
-    </ChakraProvider>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild disabled={disabled}>
+        <button
+          type="button"
+          className={cn(
+            'flex min-h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm ring-offset-background',
+            'focus:outline-none focus:ring-1 focus:ring-ring',
+            'disabled:cursor-not-allowed disabled:opacity-50',
+            className
+          )}
+          disabled={disabled}
+        >
+          <div className="flex flex-1 flex-wrap gap-1">
+            {selectedValues.length === 0 ? (
+              <span className="text-muted-foreground">{placeholder}</span>
+            ) : (
+              <>
+                {displayOptions.map((opt) => (
+                  <span
+                    key={opt.value}
+                    className="inline-flex items-center gap-1 rounded border border-input bg-background px-1.5 py-0.5 text-xs"
+                  >
+                    {opt.label}
+                    <X
+                      className="h-3 w-3 cursor-pointer hover:text-destructive"
+                      onClick={(e) => handleRemove(e, opt.value)}
+                    />
+                  </span>
+                ))}
+                {moreCount > 0 && (
+                  <span className="inline-flex items-center rounded border border-input bg-background px-1.5 py-0.5 text-xs">
+                    +{moreCount}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            {selectedValues.length > 0 && (
+              <X
+                className="h-4 w-4 opacity-50 hover:opacity-100"
+                onClick={handleClear}
+              />
+            )}
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </div>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent 
+        className="p-1" 
+        align="start"
+        style={{ minWidth: 'var(--radix-popover-trigger-width)' }}
+      >
+        <div className="max-h-60 overflow-auto">
+          {options.length === 0 ? (
+            <div className="py-2 text-center text-sm text-muted-foreground">
+              暂无选项
+            </div>
+          ) : (
+            options.map((opt) => {
+              const isSelected = selectedValues.includes(opt.value)
+              return (
+                <div
+                  key={opt.value}
+                  className={cn(
+                    'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none',
+                    'hover:bg-accent hover:text-accent-foreground',
+                    opt.disabled && 'pointer-events-none opacity-50'
+                  )}
+                  onClick={() => !opt.disabled && handleSelect(opt.value)}
+                >
+                  <span>{opt.label}</span>
+                  {isSelected && (
+                    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+                      <Check className="h-4 w-4" />
+                    </span>
+                  )}
+                </div>
+              )
+            })
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
