@@ -10,6 +10,7 @@ import {
   SelectValue
 } from '../ui/select'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { ScrollArea } from '../ui/scroll-area'
 import { cn } from '../lib/utils'
 
 export interface SelectOption {
@@ -210,39 +211,41 @@ function MultiSelectInner({
         </button>
       </PopoverTrigger>
       <PopoverContent 
-        className="p-1" 
+        className="p-0" 
         align="start"
         style={{ minWidth: 'var(--radix-popover-trigger-width)' }}
       >
-        <div className="max-h-60 overflow-auto">
-          {options.length === 0 ? (
-            <div className="py-2 text-center text-sm text-muted-foreground">
-              暂无选项
+        {options.length === 0 ? (
+          <div className="py-2 text-center text-sm text-muted-foreground">
+            暂无选项
+          </div>
+        ) : (
+          <ScrollArea className="max-h-72">
+            <div className="p-1">
+              {options.map((opt) => {
+                const isSelected = selectedValues.includes(opt.value)
+                return (
+                  <div
+                    key={opt.value}
+                    className={cn(
+                      'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none',
+                      'hover:bg-accent hover:text-accent-foreground',
+                      opt.disabled && 'pointer-events-none opacity-50'
+                    )}
+                    onClick={() => !opt.disabled && handleSelect(opt.value)}
+                  >
+                    <span>{opt.label}</span>
+                    {isSelected && (
+                      <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+                        <Check className="h-4 w-4" />
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-          ) : (
-            options.map((opt) => {
-              const isSelected = selectedValues.includes(opt.value)
-              return (
-                <div
-                  key={opt.value}
-                  className={cn(
-                    'relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none',
-                    'hover:bg-accent hover:text-accent-foreground',
-                    opt.disabled && 'pointer-events-none opacity-50'
-                  )}
-                  onClick={() => !opt.disabled && handleSelect(opt.value)}
-                >
-                  <span>{opt.label}</span>
-                  {isSelected && (
-                    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
-                      <Check className="h-4 w-4" />
-                    </span>
-                  )}
-                </div>
-              )
-            })
-          )}
-        </div>
+          </ScrollArea>
+        )}
       </PopoverContent>
     </Popover>
   )
