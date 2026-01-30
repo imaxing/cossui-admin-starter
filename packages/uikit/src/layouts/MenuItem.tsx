@@ -40,18 +40,21 @@ export function DefaultMenuItemContent({
     <>
       {item.icon && (
         <div
-          className={`shrink-0 flex items-center  justify-center transition-colors ${
+          className={`shrink-0 flex items-center justify-center transition-colors ${
             open ? 'h-4 w-4' : 'h-5 w-5'
           } ${active ? 'opacity-100' : 'opacity-50'}`}
         >
           {item.icon}
         </div>
       )}
-      {open && (
-        <span className="flex-1 text-left text-sm whitespace-nowrap">
-          {item.name}
-        </span>
-      )}
+      {/* 始终渲染文字，通过 CSS 控制可见性 */}
+      <span 
+        className={`sidebar-menu-text flex-1 text-left text-sm whitespace-nowrap transition-[opacity,width] duration-200 ${
+          open ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'
+        }`}
+      >
+        {item.name}
+      </span>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import type { LayoutProps, MenuItem } from './types'
 import { DEFAULT_SIZE, SIDEBAR_EXPANDED } from './config'
 import { LogoutIcon } from './Icons'
@@ -88,72 +88,35 @@ export default function Layout({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active])
 
-  // hover 展开状态（仅在收起状态下生效）
-  const [isHovered, setIsHovered] = useState(false)
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-
-  const handleMouseEnter = () => {
-    if (!effectiveOpen) {
-      // 延迟一点点再展开，避免鼠标快速划过时误触发
-      hoverTimeoutRef.current = setTimeout(() => {
-        setIsHovered(true)
-      }, 100)
-    }
-  }
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current)
-      hoverTimeoutRef.current = null
-    }
-    setIsHovered(false)
-  }
-
-  // 清理 timeout
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) {
-        clearTimeout(hoverTimeoutRef.current)
-      }
-    }
-  }, [])
-
-  // 当通过按钮展开时，清除 hover 状态
-  useEffect(() => {
-    if (effectiveOpen) {
-      setIsHovered(false)
-    }
-  }, [effectiveOpen])
-
-  // 是否显示展开状态的内容（点击展开或hover展开）
-  const showExpanded = effectiveOpen || isHovered
-
   return (
     <SidebarProvider
       open={effectiveOpen}
       onOpenChange={handleSidebarOpenChange}
     >
       <div className={`flex h-screen w-full bg-background ${className}`}>
-        {/* 侧边栏占位区域（保持布局） */}
+        {/* 侧边栏占位区域（保持布局，仅在点击展开时变宽） */}
         <div
           className="flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.22,0.67,0.38,0.95)]"
           style={{ width: effectiveOpen ? `${expanded}px` : `${collapsed}px` }}
         />
 
-        {/* 侧边栏（fixed 定位） */}
+        {/* 侧边栏（fixed 定位，支持 CSS hover 展开） */}
         <aside
           className={cn(
-            "fixed left-0 top-0 h-screen flex flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground z-40",
-            "transition-[width] duration-300 ease-[cubic-bezier(0.22,0.67,0.38,0.95)]",
-            // hover 展开时添加阴影
-            isHovered && !effectiveOpen && "shadow-xl"
+            "group/sidebar fixed left-0 top-0 h-screen flex flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground z-40",
+            "transition-[width,box-shadow] duration-300 ease-[cubic-bezier(0.22,0.67,0.38,0.95)]",
+            // 未点击展开时，hover 添加阴影
+            !effectiveOpen && "hover:shadow-xl"
           )}
           style={{
-            width: showExpanded ? `${expanded}px` : `${collapsed}px`,
+            // @ts-expect-error CSS custom properties
+            '--sidebar-collapsed': `${collapsed}px`,
+            '--sidebar-expanded': `${expanded}px`,
+            width: effectiveOpen ? `${expanded}px` : `${collapsed}px`,
             borderColor: 'var(--sidebar-border)'
           }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          // 纯 CSS hover 控制宽度（仅在收起状态下生效）
+          data-collapsed={!effectiveOpen}
         >
           {/* Logo */}
           <div
@@ -178,7 +141,7 @@ export default function Layout({
                     <MenuItemWrapper
                       key={index}
                       item={item}
-                      open={showExpanded}
+                      open={true}
                       active={isActive}
                       activePath={active}
                       itemRender={itemRender}
@@ -194,9 +157,9 @@ export default function Layout({
           </div>
 
           {/* 版本信息 */}
-          {version && showExpanded && (
+          {version && (
             <div
-              className="px-4 py-3 border-t text-center text-xs text-sidebar-foreground/64"
+              className="sidebar-menu-text px-4 py-3 border-t text-center text-xs text-sidebar-foreground/64"
               style={{ borderColor: 'var(--sidebar-border)' }}
             >
               v{version}

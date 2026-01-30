@@ -218,3 +218,42 @@
     }
   }
 }
+
+/* 侧边栏 hover 展开（仅在收起状态下生效） */
+aside[data-collapsed="true"]:hover {
+  width: var(--sidebar-expanded) !important;
+}
+
+/* 侧边栏菜单项文字和子菜单在收起状态下隐藏 */
+aside[data-collapsed="true"] .sidebar-menu-text,
+aside[data-collapsed="true"] [data-slot="sidebar-menu-sub"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity 0.15s ease-out, width 0.15s ease-out, height 0.15s ease-out;
+}
+
+/* hover 时显示文字和子菜单 */
+aside[data-collapsed="true"]:hover .sidebar-menu-text,
+aside[data-collapsed="true"]:hover [data-slot="sidebar-menu-sub"] {
+  opacity: 1;
+  width: auto;
+  height: auto;
+}
+
+/* 收起状态下菜单按钮样式调整 */
+aside[data-collapsed="true"] [data-slot="sidebar-menu-button"] {
+  justify-content: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  gap: 0;
+}
+
+/* hover 时恢复展开样式 */
+aside[data-collapsed="true"]:hover [data-slot="sidebar-menu-button"] {
+  justify-content: flex-start;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  gap: 0.625rem;
+}
