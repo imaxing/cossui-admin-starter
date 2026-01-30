@@ -94,15 +94,21 @@ function SingleSelectInner({
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options?.map((opt) => (
-          <SelectItem
-            key={opt.value === '' ? EMPTY_VALUE : opt.value}
-            value={opt.value === '' ? EMPTY_VALUE : String(opt.value)}
-            disabled={opt.disabled}
-          >
-            {opt.label}
-          </SelectItem>
-        ))}
+        {(!options || options.length === 0) ? (
+          <div className="py-6 text-center text-sm text-muted-foreground">
+            暂无数据
+          </div>
+        ) : (
+          options.map((opt) => (
+            <SelectItem
+              key={opt.value === '' ? EMPTY_VALUE : opt.value}
+              value={opt.value === '' ? EMPTY_VALUE : String(opt.value)}
+              disabled={opt.disabled}
+            >
+              {opt.label}
+            </SelectItem>
+          ))
+        )}
       </SelectContent>
     </SelectRoot>
   )
@@ -216,8 +222,8 @@ function MultiSelectInner({
         style={{ minWidth: 'var(--radix-popover-trigger-width)' }}
       >
         {options.length === 0 ? (
-          <div className="py-2 text-center text-sm text-muted-foreground">
-            暂无选项
+          <div className="py-6 text-center text-sm text-muted-foreground">
+            暂无数据
           </div>
         ) : (
           <ScrollArea className="max-h-72">
