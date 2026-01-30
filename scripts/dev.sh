@@ -10,10 +10,10 @@ find "packages" "apps" -type d -name "dist" -prune -exec rm -rf {} + 2>/dev/null
 find "packages" "apps" -type f -name "*.tsbuildinfo" -delete 2>/dev/null
 
 # 构建依赖包
-pnpm --filter @koala/types build && \
-pnpm --filter @koala/constants build && \
-pnpm --filter @koala/shared build && \
-pnpm --filter @koala/uikit build
+pnpm --filter @cat/types build && \
+pnpm --filter @cat/constants build && \
+pnpm --filter @cat/shared build && \
+pnpm --filter @cat/uikit build
 
 # 显示服务地址
 (

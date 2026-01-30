@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react'
 import {
   Button,
   Input,
@@ -15,8 +15,8 @@ import {
   Plus,
   Search,
   RefreshCw
-} from '@koala/uikit'
-import type { TableColumn } from '@koala/uikit'
+} from '@cat/uikit'
+import type { TableColumn } from '@cat/uikit'
 import userApi, { type User, type UserListParams } from '@/api/user'
 
 // 角色选项
@@ -34,6 +34,16 @@ const statusOptions = [
   { value: 'inactive', label: '禁用' }
 ]
 
+// 权限选项（多选示例）
+const permissionOptions = [
+  { value: 'read', label: '查看' },
+  { value: 'write', label: '编辑' },
+  { value: 'delete', label: '删除' },
+  { value: 'export', label: '导出' },
+  { value: 'import', label: '导入' },
+  { value: 'audit', label: '审核' }
+]
+
 // 角色标签颜色
 const roleBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
   admin: 'default',
@@ -48,35 +58,55 @@ const roleLabel: Record<string, string> = {
   viewer: '访客'
 }
 
-// 用户表单组件
-function UserForm({
-  initialData,
-  onSubmit
-}: {
+// 权限名称
+const permissionLabel: Record<string, string> = {
+  read: '查看',
+  write: '编辑',
+  delete: '删除',
+  export: '导出',
+  import: '导入',
+  audit: '审核'
+}
+
+interface UserFormRef {
+  submit: () => Promise<void>
+}
+
+interface UserFormProps {
   initialData?: Partial<User>
   onSubmit: (data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
-}) {
+  onClose?: () => void
+}
+
+// 用户表单组件
+const UserForm = forwardRef<UserFormRef, UserFormProps>(function UserForm(
+  { initialData, onSubmit, onClose },
+  ref
+) {
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     email: initialData?.email || '',
     role: initialData?.role || 'viewer',
-    status: initialData?.status || 'active'
+    status: initialData?.status || 'active',
+    permissions: (initialData?.permissions as string[]) || ['read']
   })
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+  const handleChange = (field: string, value: string | (string | number)[]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
-  // 暴露 submit 方法给 dialog
-  ;(window as any).__formSubmit = async () => {
-    if (!formData.name.trim()) {
-      throw new Error('请输入用户名')
+  useImperativeHandle(ref, () => ({
+    submit: async () => {
+      if (!formData.name.trim()) {
+        throw new Error('请输入用户名')
+      }
+      if (!formData.email.trim()) {
+        throw new Error('请输入邮箱')
+      }
+      await onSubmit(formData as Omit<User, 'id' | 'createdAt' | 'updatedAt'>)
+      onClose?.()
     }
-    if (!formData.email.trim()) {
-      throw new Error('请输入邮箱')
-    }
-    await onSubmit(formData as any)
-  }
+  }))
 
   return (
     <div className="space-y-4 py-2">
@@ -112,9 +142,19 @@ function UserForm({
           options={statusOptions.slice(1)}
         />
       </FormField>
+
+      <FormField label="权限（多选示例）">
+        <Select
+          multiple
+          value={formData.permissions}
+          onChange={(value) => handleChange('permissions', value)}
+          options={permissionOptions}
+          placeholder="选择权限"
+        />
+      </FormField>
     </div>
   )
-}
+})
 
 export default function UsersPage() {
   const message = useMessage()
@@ -136,8 +176,9 @@ export default function UsersPage() {
       const result = await userApi.getUserList(params)
       setUsers(result.list)
       setTotal(result.total)
-    } catch (error: any) {
-      message.error(error?.message || '加载失败')
+    } catch (error: unknown) {
+      const err = error as Error
+      message.error(err?.message || '加载失败')
     } finally {
       setLoading(false)
     }
@@ -149,17 +190,17 @@ export default function UsersPage() {
 
   // 搜索
   const handleSearch = (keyword: string) => {
-    setParams(prev => ({ ...prev, keyword, page: 1 }))
+    setParams((prev) => ({ ...prev, keyword, page: 1 }))
   }
 
   // 筛选
   const handleFilter = (field: string, value: string) => {
-    setParams(prev => ({ ...prev, [field]: value, page: 1 }))
+    setParams((prev) => ({ ...prev, [field]: value, page: 1 }))
   }
 
   // 分页
   const handlePageChange = (page: number, pageSize: number) => {
-    setParams(prev => ({ ...prev, page, pageSize }))
+    setParams((prev) => ({ ...prev, page, pageSize }))
   }
 
   // 新增用户
@@ -167,13 +208,7 @@ export default function UsersPage() {
     createDialog({
       title: '新增用户',
       width: 480,
-      buttons: [
-        { text: '取消', callback: 'cancel' },
-        { text: '确定', callback: 'submit', type: 'primary' }
-      ],
-      onSubmit: async () => {
-        await (window as any).__formSubmit()
-      },
+      buttons: [{ text: '确定', callback: 'submit', type: 'primary' }],
       component: (
         <UserForm
           onSubmit={async (data) => {
@@ -191,13 +226,7 @@ export default function UsersPage() {
     createDialog({
       title: '编辑用户',
       width: 480,
-      buttons: [
-        { text: '取消', callback: 'cancel' },
-        { text: '确定', callback: 'submit', type: 'primary' }
-      ],
-      onSubmit: async () => {
-        await (window as any).__formSubmit()
-      },
+      buttons: [{ text: '确定', callback: 'submit', type: 'primary' }],
       component: (
         <UserForm
           initialData={user}
@@ -237,22 +266,50 @@ export default function UsersPage() {
       dataIndex: 'role',
       key: 'role',
       width: 100,
-      render: (role: string) => (
-        <Badge variant={roleBadgeVariant[role] || 'outline'}>
-          {roleLabel[role] || role}
-        </Badge>
-      )
+      render: (value: unknown) => {
+        const role = value as string
+        return (
+          <Badge variant={roleBadgeVariant[role] || 'outline'}>
+            {roleLabel[role] || role}
+          </Badge>
+        )
+      }
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (status: string) => (
-        <Badge variant={status === 'active' ? 'default' : 'secondary'}>
-          {status === 'active' ? '正常' : '禁用'}
-        </Badge>
-      )
+      render: (value: unknown) => {
+        const status = value as string
+        return (
+          <Badge variant={status === 'active' ? 'default' : 'secondary'}>
+            {status === 'active' ? '正常' : '禁用'}
+          </Badge>
+        )
+      }
+    },
+    {
+      title: '权限',
+      dataIndex: 'permissions',
+      key: 'permissions',
+      width: 200,
+      render: (value: unknown) => {
+        const permissions = (value as string[]) || []
+        if (permissions.length === 0) return '-'
+        return (
+          <div className="flex flex-wrap gap-1">
+            {permissions.slice(0, 3).map((p) => (
+              <Badge key={p} variant="outline">
+                {permissionLabel[p] || p}
+              </Badge>
+            ))}
+            {permissions.length > 3 && (
+              <Badge variant="secondary">+{permissions.length - 3}</Badge>
+            )}
+          </div>
+        )
+      }
     },
     {
       title: '创建时间',
@@ -270,14 +327,17 @@ export default function UsersPage() {
       title: '操作',
       key: 'actions',
       width: 160,
-      render: (_: unknown, record: User) => (
-        <TableActions
-          actions={[
-            { text: '编辑', onClick: () => handleEdit(record) },
-            { text: '删除', onClick: () => handleDelete(record), confirm: true }
-          ]}
-        />
-      )
+      render: (_: unknown, record: Record<string, unknown>) => {
+        const user = record as unknown as User
+        return (
+          <TableActions
+            actions={[
+              { text: '编辑', onClick: () => handleEdit(user) },
+              { text: '删除', onClick: () => handleDelete(user), confirm: true }
+            ]}
+          />
+        )
+      }
     }
   ]
 
@@ -317,7 +377,7 @@ export default function UsersPage() {
             options={statusOptions}
           />
         </div>
-        <Button variant="outline" size="sm" onClick={loadData}>
+        <Button type="dashed" size="small" onClick={loadData}>
           <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
         </Button>
       </div>
@@ -325,7 +385,7 @@ export default function UsersPage() {
       {/* 数据表格 */}
       <Table
         columns={columns}
-        dataSource={users}
+        dataSource={users as unknown as Record<string, unknown>[]}
         loading={loading}
         rowKey="id"
         pagination={false}

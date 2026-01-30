@@ -24,7 +24,7 @@ export function Popover({
 }: PopoverProps) {
   return (
     <UIPopover>
-      <PopoverTrigger render={trigger as any} />
+      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
       <PopoverContent
         align={align}
         sideOffset={sideOffset}

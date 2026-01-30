@@ -1,6 +1,6 @@
-# RULE.md - Koala 项目开发规范
+# RULE.md - cat 项目开发规范
 
-**本文件是 Koala 项目的核心规范文档，所有开发者（包括 AI 助手）必须严格遵守。**
+**本文件是 cat 项目的核心规范文档，所有开发者（包括 AI 助手）必须严格遵守。**
 
 **AI 助手通用协作规范请参考：`~/RULE.md`**
 
@@ -44,7 +44,7 @@ common 层 (封装层 - Button, Input, Table 等)
 
 ```bash
 # 检查业务层是否直接导入 ui 层
-grep -r "from '@koala/uikit/ui'" apps/
+grep -r "from '@cat/uikit/ui'" apps/
 
 # 检查是否使用了细粒度子组件
 rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
@@ -59,6 +59,7 @@ rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
 **以下配置已经过充分测试并稳定运行，严禁任何修改！**
 
 违反此规范将导致：
+
 - 按钮/徽章/对话框背景色透明或颜色错误
 - Light/Dark 模式显示异常
 - 所有弹出层（Dialog/Menu/Tooltip/Popover 等）显示错误
@@ -119,10 +120,10 @@ rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
 ```css
 .dark {
   /* 必须重新定义所有颜色变量 */
-  --background: oklch(0.145 0 0);  /* 深色背景 */
-  --foreground: oklch(0.985 0 0);  /* 浅色文字 */
-  --card: oklch(0.205 0 0);        /* 稍亮的卡片背景 */
-  --primary: oklch(0.922 0 0);     /* 浅色主色调 */
+  --background: oklch(0.145 0 0); /* 深色背景 */
+  --foreground: oklch(0.985 0 0); /* 浅色文字 */
+  --card: oklch(0.205 0 0); /* 稍亮的卡片背景 */
+  --primary: oklch(0.922 0 0); /* 浅色主色调 */
   /* ... */
 }
 ```
@@ -146,6 +147,7 @@ rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
 ```
 
 **原因说明：**
+
 - `next-themes` 会将 `.dark` 类添加到 `<html>` 元素上
 - 如果选择器只匹配子元素，`<html>` 本身的样式不会应用 dark 变体
 - 这会导致本地开发正常，但生产构建后 Light/Dark 颜色反转
@@ -168,6 +170,7 @@ rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
 ```
 
 **注意：**
+
 - 不注册 = Tailwind 类名不生效（如 `bg-card` 无效）
 - 必须使用 `--color-*` 前缀
 - 必须引用原始变量 `var(--*)`
@@ -176,13 +179,13 @@ rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
 
 #### 3.1 语义化颜色分类
 
-| 颜色类型 | 使用场景 | Tailwind 类名 | 示例组件 |
-|---------|---------|--------------|---------|
-| `primary` | 主要操作按钮、强调元素 | `bg-primary` | Button, Badge(default), Switch, Checkbox |
-| `card` | 卡片、对话框、弹出层背景 | `bg-card` | Dialog, Sheet, Menu, Popover, Tooltip |
-| `background` | 页面背景 | `bg-background` | body, page container |
-| `secondary` | 次要按钮 | `bg-secondary` | Button(secondary) |
-| `muted` | 弱化元素背景 | `bg-muted` | disabled state |
+| 颜色类型     | 使用场景                 | Tailwind 类名   | 示例组件                                 |
+| ------------ | ------------------------ | --------------- | ---------------------------------------- |
+| `primary`    | 主要操作按钮、强调元素   | `bg-primary`    | Button, Badge(default), Switch, Checkbox |
+| `card`       | 卡片、对话框、弹出层背景 | `bg-card`       | Dialog, Sheet, Menu, Popover, Tooltip    |
+| `background` | 页面背景                 | `bg-background` | body, page container                     |
+| `secondary`  | 次要按钮                 | `bg-secondary`  | Button(secondary)                        |
+| `muted`      | 弱化元素背景             | `bg-muted`      | disabled state                           |
 
 #### 3.2 组件背景色规则
 
@@ -217,8 +220,11 @@ rg "(DialogContent|DialogHeader|CardHeader)" apps/ --type tsx
 
 ```css
 /* ❌ 严重错误 - 会导致所有组件背景色失效 */
-button, input, select, textarea {
-  background-color: initial !important;  /* 破坏性规则 */
+button,
+input,
+select,
+textarea {
+  background-color: initial !important; /* 破坏性规则 */
 }
 
 /* ✅ 正确 - 仅针对未样式化的原生元素 */
@@ -230,6 +236,7 @@ textarea:not([class*='bg-']):not([data-slot]) {
 ```
 
 **关键点：**
+
 - 移除了对 `button` 的全局重置
 - 使用 `:not([data-slot])` 排除 UI 组件
 - 使用 `:not([class*='bg-'])` 排除已样式化元素
@@ -252,7 +259,7 @@ button {
 ```css
 /* ✅ 正确 */
 button:not([data-slot]) {
-  background-color: initial;  /* 不使用 !important */
+  background-color: initial; /* 不使用 !important */
 }
 ```
 
@@ -486,7 +493,7 @@ END $$;
 
 ## 🔐 认证与授权
 
-1. **统一入口**：通过 `@koala/auth/client` 的 `AuthProvider`
+1. **统一入口**：通过 `@cat/auth/client` 的 `AuthProvider`
 2. **应用权限校验**：`getUserConfig` + `appCode`
 3. **静默检查**：标签页切换时不刷新 UI
 
@@ -516,7 +523,7 @@ packages/ - 共享代码包（types、constants、shared、db、server、uikit�
 ### 添加新页面
 
 1. 在 `*-admin/src/app/(admin)/` 创建页面
-2. 使用 `@koala/uikit` 组件
+2. 使用 `@cat/uikit` 组件
 3. 使用 `useTableData` + `createDialog`
 
 ### 添加新 API

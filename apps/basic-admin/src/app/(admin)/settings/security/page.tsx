@@ -15,11 +15,11 @@ import {
   Label,
   Badge,
   Table
-} from '@koala/uikit'
-import type { TableColumn } from '@koala/uikit'
+} from '@cat/uikit'
+import type { TableColumn } from '@cat/uikit'
 
 // 模拟延迟
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // 模拟登录日志
 const loginLogs = [
@@ -81,11 +81,11 @@ export default function SecuritySettingsPage() {
   })
 
   const handlePasswordChange = (field: string, value: string) => {
-    setPasswordForm(prev => ({ ...prev, [field]: value }))
+    setPasswordForm((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleSecurityChange = (field: string, value: boolean) => {
-    setSecurity(prev => ({ ...prev, [field]: value }))
+    setSecurity((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleChangePassword = async () => {
@@ -165,11 +165,14 @@ export default function SecuritySettingsPage() {
       dataIndex: 'status',
       key: 'status',
       width: 80,
-      render: (status: string) => (
-        <Badge variant={status === 'success' ? 'default' : 'destructive'}>
-          {status === 'success' ? '成功' : '失败'}
-        </Badge>
-      )
+      render: (value: unknown) => {
+        const status = value as string
+        return (
+          <Badge variant={status === 'success' ? 'default' : 'destructive'}>
+            {status === 'success' ? '成功' : '失败'}
+          </Badge>
+        )
+      }
     }
   ]
 
@@ -184,16 +187,16 @@ export default function SecuritySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>修改密码</CardTitle>
-            <CardDescription>
-              定期修改密码可以提高账户安全性
-            </CardDescription>
+            <CardDescription>定期修改密码可以提高账户安全性</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField label="当前密码">
               <Input
                 type="password"
                 value={passwordForm.currentPassword}
-                onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+                onChange={(e) =>
+                  handlePasswordChange('currentPassword', e.target.value)
+                }
                 placeholder="请输入当前密码"
               />
             </FormField>
@@ -202,7 +205,9 @@ export default function SecuritySettingsPage() {
               <Input
                 type="password"
                 value={passwordForm.newPassword}
-                onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                onChange={(e) =>
+                  handlePasswordChange('newPassword', e.target.value)
+                }
                 placeholder="请输入新密码（至少6位）"
               />
             </FormField>
@@ -211,7 +216,9 @@ export default function SecuritySettingsPage() {
               <Input
                 type="password"
                 value={passwordForm.confirmPassword}
-                onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                onChange={(e) =>
+                  handlePasswordChange('confirmPassword', e.target.value)
+                }
                 placeholder="请再次输入新密码"
               />
             </FormField>
@@ -228,9 +235,7 @@ export default function SecuritySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>安全选项</CardTitle>
-            <CardDescription>
-              配置账户的安全策略
-            </CardDescription>
+            <CardDescription>配置账户的安全策略</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -242,7 +247,9 @@ export default function SecuritySettingsPage() {
               </div>
               <Switch
                 checked={security.twoFactorAuth}
-                onCheckedChange={(checked) => handleSecurityChange('twoFactorAuth', checked)}
+                onCheckedChange={(checked) =>
+                  handleSecurityChange('twoFactorAuth', checked)
+                }
               />
             </div>
 
@@ -255,7 +262,9 @@ export default function SecuritySettingsPage() {
               </div>
               <Switch
                 checked={security.loginAlert}
-                onCheckedChange={(checked) => handleSecurityChange('loginAlert', checked)}
+                onCheckedChange={(checked) =>
+                  handleSecurityChange('loginAlert', checked)
+                }
               />
             </div>
 
@@ -268,7 +277,9 @@ export default function SecuritySettingsPage() {
               </div>
               <Switch
                 checked={security.sessionTimeout}
-                onCheckedChange={(checked) => handleSecurityChange('sessionTimeout', checked)}
+                onCheckedChange={(checked) =>
+                  handleSecurityChange('sessionTimeout', checked)
+                }
               />
             </div>
 
@@ -284,14 +295,12 @@ export default function SecuritySettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>登录日志</CardTitle>
-            <CardDescription>
-              最近的登录记录
-            </CardDescription>
+            <CardDescription>最近的登录记录</CardDescription>
           </CardHeader>
           <CardContent>
             <Table
               columns={columns}
-              dataSource={loginLogs}
+              dataSource={loginLogs as unknown as Record<string, unknown>[]}
               rowKey="id"
               pagination={false}
             />

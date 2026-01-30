@@ -22,15 +22,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@koala/shared": ["../shared/src/index.ts"],
-      "@koala/types": ["../types/src/index.ts"]
+      "@cat/shared": ["../shared/src/index.ts"],
+      "@cat/types": ["../types/src/index.ts"]
     },
     "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/tailwind.config.ts"],
-  "references": [
-    { "path": "../shared" },
-    { "path": "../types" }
-  ]
+  "references": [{ "path": "../shared" }, { "path": "../types" }]
 }

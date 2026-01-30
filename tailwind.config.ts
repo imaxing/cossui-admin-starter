@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss'
-import baseConfig from '@koala/uikit/tailwind.config'
+import baseConfig from '@cat/uikit/tailwind.config'
 
 /**
  * 根目录 Tailwind 配置

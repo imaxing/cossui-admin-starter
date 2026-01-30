@@ -6,25 +6,23 @@ import { Select, type SelectOption } from './Select'
 export type DictSelectOption = SelectOption
 
 export interface DictSelectProps {
-  api: (params?: Record<string, any>) => Promise<any>
-  params?: Record<string, any>
-  value?: string | number | (string | number)[]
-  onChange?: (value: string | number | (string | number)[]) => void
+  api: (params?: Record<string, unknown>) => Promise<unknown>
+  params?: Record<string, unknown>
+  value?: string | number
+  onChange?: (value: string) => void
   placeholder?: string
   disabled?: boolean
-  allowClear?: boolean
-  loading?: boolean
   className?: string
-  multiple?: boolean
-  mapOption?: (item: any) => DictSelectOption | null
+  mapOption?: (item: unknown) => DictSelectOption | null
 }
 
-const defaultMapOption = (item: any): DictSelectOption | null => {
-  if (!item) return null
-  const value = item.value ?? item.code ?? item.uuid ?? item.id
+const defaultMapOption = (item: unknown): DictSelectOption | null => {
+  if (!item || typeof item !== 'object') return null
+  const obj = item as Record<string, unknown>
+  const value = obj.value ?? obj.code ?? obj.uuid ?? obj.id
   if (value === undefined || value === null || value === '') return null
-  const label = item.label ?? item.name ?? String(value)
-  return { value, label }
+  const label = obj.label ?? obj.name ?? String(value)
+  return { value: String(value), label: String(label) }
 }
 
 export function DictSelect({
@@ -34,10 +32,7 @@ export function DictSelect({
   onChange,
   placeholder,
   disabled,
-  allowClear,
-  loading: externalLoading,
   className,
-  multiple,
   mapOption = defaultMapOption
 }: DictSelectProps) {
   const [options, setOptions] = useState<DictSelectOption[]>([])
@@ -63,8 +58,10 @@ export function DictSelect({
       setLoading(true)
       try {
         const response = await api(params)
-        const list = Array.isArray(response) ? response : response?.data || []
-        const mapped = (list as any[])
+        const list = Array.isArray(response)
+          ? response
+          : (response as Record<string, unknown>)?.data || []
+        const mapped = (list as unknown[])
           .map((item) => mapOption(item))
           .filter(Boolean) as DictSelectOption[]
         if (!cancelled) {
@@ -91,22 +88,10 @@ export function DictSelect({
   return (
     <Select
       value={value}
-      mode={multiple ? 'multiple' : undefined}
-      onChange={(nextValue) => {
-        if (multiple) {
-          onChange?.(Array.isArray(nextValue) ? nextValue : [nextValue])
-          return
-        }
-        if (Array.isArray(nextValue)) {
-          return
-        }
-        onChange?.(nextValue)
-      }}
+      onChange={onChange}
       placeholder={placeholder}
-      disabled={disabled}
-      allowClear={allowClear}
+      disabled={disabled || loading}
       options={options}
-      loading={externalLoading ?? loading}
       className={className}
     />
   )

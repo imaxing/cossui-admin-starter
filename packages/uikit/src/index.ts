@@ -22,7 +22,7 @@ export * from './lib'
 
 // ==================== 服务器模板 ====================
 // templates 模块使用 Node.js fs 模块，仅服务端可用
-// 请通过独立路径导入：import { templates } from '@koala/uikit/templates'
+// 请通过独立路径导入：import { templates } from '@cat/uikit/templates'
 
 // ==================== Layouts 布局组件 ====================
 export { default as Layout } from './layouts/Layout'
@@ -62,19 +62,27 @@ export { DictSelect } from './common/DictSelect'
 export type { DictSelectProps, DictSelectOption } from './common/DictSelect'
 
 // Tabs 组件（高阶封装 + 原始子组件）
-export { Tabs, TabsRoot, TabsList, TabsTrigger, TabsContent } from './common/Tabs'
+export {
+  Tabs,
+  TabsRoot,
+  TabsList,
+  TabsTrigger,
+  TabsContent
+} from './common/Tabs'
 export type { TabsProps, TabsItem } from './common/Tabs'
 
 // Popover 组件（高阶封装 + 原始子组件）
-export { Popover, PopoverRoot, PopoverTrigger, PopoverContent } from './common/Popover'
+export {
+  Popover,
+  PopoverRoot,
+  PopoverTrigger,
+  PopoverContent
+} from './common/Popover'
 export type { PopoverProps } from './common/Popover'
 
 // DropdownMenu 组件
 export { DropdownMenu } from './common/DropdownMenu'
-export type {
-  DropdownMenuProps,
-  DropdownMenuItem
-} from './common/DropdownMenu'
+export type { DropdownMenuProps, DropdownMenuItem } from './common/DropdownMenu'
 
 // 模态框组件
 export { Modal } from './common/Modal'
@@ -115,10 +123,7 @@ export type { StatusBadgeProps, StatusVariant } from './common/StatusBadge'
 
 // Breadcrumb 组件
 export { Breadcrumb, BreadcrumbAdvanced } from './common/Breadcrumb'
-export type {
-  BreadcrumbProps,
-  BreadcrumbItem
-} from './common/Breadcrumb'
+export type { BreadcrumbProps, BreadcrumbItem } from './common/Breadcrumb'
 
 // Collapsible 组件
 export {

@@ -13,7 +13,7 @@ const apiUrl = process.env.API_BASE_URL || ''
 
 const nextConfig: NextConfig = {
   basePath,
-  transpilePackages: ['@koala/shared', '@koala/uikit'],
+  transpilePackages: ['@cat/shared', '@cat/uikit'],
 
   // 仅在生产环境使用 standalone 模式
   ...(process.env.NODE_ENV === 'production' && { output: 'standalone' }),

@@ -11,7 +11,7 @@ import {
   createNextLink,
   mapMenuItems,
   LucideIcons
-} from '@koala/uikit'
+} from '@cat/uikit'
 
 const NextLink = createNextLink(Link)
 

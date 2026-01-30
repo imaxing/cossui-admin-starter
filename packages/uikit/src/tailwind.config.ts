@@ -11,7 +11,7 @@ import tailwindcssAnimate from 'tailwindcss-animate'
  * @example
  * ```typescript
  * // apps/xxx-admin/tailwind.config.ts
- * import baseConfig from '@koala/uikit/tailwind.config'
+ * import baseConfig from '@cat/uikit/tailwind.config'
  *
  * export default {
  *   ...baseConfig,

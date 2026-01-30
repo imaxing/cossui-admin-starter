@@ -1,6 +1,12 @@
 'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@koala/uikit'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@cat/uikit'
 
 export default function Home() {
   return (
@@ -16,9 +22,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              较上月增长 +20.1%
-            </p>
+            <p className="text-xs text-muted-foreground">较上月增长 +20.1%</p>
           </CardContent>
         </Card>
 
@@ -28,9 +32,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">573</div>
-            <p className="text-xs text-muted-foreground">
-              较上月增长 +12.5%
-            </p>
+            <p className="text-xs text-muted-foreground">较上月增长 +12.5%</p>
           </CardContent>
         </Card>
 
@@ -40,9 +42,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2,345</div>
-            <p className="text-xs text-muted-foreground">
-              较昨日增长 +5.2%
-            </p>
+            <p className="text-xs text-muted-foreground">较昨日增长 +5.2%</p>
           </CardContent>
         </Card>
 
@@ -52,9 +52,7 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12.5%</div>
-            <p className="text-xs text-muted-foreground">
-              较上周提升 +2.1%
-            </p>
+            <p className="text-xs text-muted-foreground">较上周提升 +2.1%</p>
           </CardContent>
         </Card>
       </div>
@@ -63,9 +61,7 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle>最近活动</CardTitle>
-            <CardDescription>
-              系统最近的操作记录
-            </CardDescription>
+            <CardDescription>系统最近的操作记录</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -97,9 +93,7 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle>快速入口</CardTitle>
-            <CardDescription>
-              常用功能快捷访问
-            </CardDescription>
+            <CardDescription>常用功能快捷访问</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">

@@ -1,5 +1,5 @@
 {
-  "name": "@koala/types",
+  "name": "@cat/types",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -16,7 +16,9 @@
   },
   "typesVersions": {
     "*": {
-      "admin": ["dist/admin.d.ts"]
+      "admin": [
+        "dist/admin.d.ts"
+      ]
     }
   },
   "scripts": {

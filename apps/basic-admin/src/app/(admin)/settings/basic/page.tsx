@@ -13,10 +13,10 @@ import {
   useMessage,
   Switch,
   Label
-} from '@koala/uikit'
+} from '@cat/uikit'
 
 // 模拟延迟
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export default function BasicSettingsPage() {
   const message = useMessage()
@@ -37,11 +37,11 @@ export default function BasicSettingsPage() {
   })
 
   const handleChange = (field: string, value: string) => {
-    setSettings(prev => ({ ...prev, [field]: value }))
+    setSettings((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleNotificationChange = (field: string, value: boolean) => {
-    setNotifications(prev => ({ ...prev, [field]: value }))
+    setNotifications((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleSave = async () => {
@@ -67,9 +67,7 @@ export default function BasicSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>站点信息</CardTitle>
-            <CardDescription>
-              配置站点的基本信息
-            </CardDescription>
+            <CardDescription>配置站点的基本信息</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField label="站点名称">
@@ -83,7 +81,9 @@ export default function BasicSettingsPage() {
             <FormField label="站点描述">
               <Input
                 value={settings.siteDescription}
-                onChange={(e) => handleChange('siteDescription', e.target.value)}
+                onChange={(e) =>
+                  handleChange('siteDescription', e.target.value)
+                }
                 placeholder="请输入站点描述"
               />
             </FormField>
@@ -112,9 +112,7 @@ export default function BasicSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>备案信息</CardTitle>
-            <CardDescription>
-              配置站点的备案和版权信息
-            </CardDescription>
+            <CardDescription>配置站点的备案和版权信息</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField label="备案号">
@@ -139,9 +137,7 @@ export default function BasicSettingsPage() {
         <Card>
           <CardHeader>
             <CardTitle>通知设置</CardTitle>
-            <CardDescription>
-              配置系统通知方式
-            </CardDescription>
+            <CardDescription>配置系统通知方式</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -153,7 +149,9 @@ export default function BasicSettingsPage() {
               </div>
               <Switch
                 checked={notifications.emailNotify}
-                onCheckedChange={(checked) => handleNotificationChange('emailNotify', checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange('emailNotify', checked)
+                }
               />
             </div>
 
@@ -166,7 +164,9 @@ export default function BasicSettingsPage() {
               </div>
               <Switch
                 checked={notifications.systemNotify}
-                onCheckedChange={(checked) => handleNotificationChange('systemNotify', checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange('systemNotify', checked)
+                }
               />
             </div>
 
@@ -179,7 +179,9 @@ export default function BasicSettingsPage() {
               </div>
               <Switch
                 checked={notifications.loginNotify}
-                onCheckedChange={(checked) => handleNotificationChange('loginNotify', checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange('loginNotify', checked)
+                }
               />
             </div>
           </CardContent>

@@ -9,6 +9,7 @@ export interface User {
   avatar?: string
   role: 'admin' | 'editor' | 'viewer'
   status: 'active' | 'inactive'
+  permissions?: string[]
   createdAt: string
   updatedAt: string
 }
@@ -37,6 +38,7 @@ let mockUsers: User[] = [
     email: 'zhangsan@example.com',
     role: 'admin',
     status: 'active',
+    permissions: ['read', 'write', 'delete', 'export', 'import', 'audit'],
     createdAt: '2024-01-15 10:30:00',
     updatedAt: '2024-01-20 14:20:00'
   },
@@ -46,6 +48,7 @@ let mockUsers: User[] = [
     email: 'lisi@example.com',
     role: 'editor',
     status: 'active',
+    permissions: ['read', 'write', 'export'],
     createdAt: '2024-01-16 09:15:00',
     updatedAt: '2024-01-18 11:45:00'
   },
@@ -55,6 +58,7 @@ let mockUsers: User[] = [
     email: 'wangwu@example.com',
     role: 'viewer',
     status: 'inactive',
+    permissions: ['read'],
     createdAt: '2024-01-17 16:00:00',
     updatedAt: '2024-01-17 16:00:00'
   },
@@ -64,6 +68,7 @@ let mockUsers: User[] = [
     email: 'zhaoliu@example.com',
     role: 'editor',
     status: 'active',
+    permissions: ['read', 'write', 'delete'],
     createdAt: '2024-01-18 08:30:00',
     updatedAt: '2024-01-19 09:00:00'
   },
@@ -73,6 +78,7 @@ let mockUsers: User[] = [
     email: 'qianqi@example.com',
     role: 'viewer',
     status: 'active',
+    permissions: ['read', 'export'],
     createdAt: '2024-01-19 14:45:00',
     updatedAt: '2024-01-19 14:45:00'
   },
@@ -82,6 +88,7 @@ let mockUsers: User[] = [
     email: 'sunba@example.com',
     role: 'admin',
     status: 'active',
+    permissions: ['read', 'write', 'delete', 'export', 'audit'],
     createdAt: '2024-01-20 10:00:00',
     updatedAt: '2024-01-21 15:30:00'
   },
@@ -91,6 +98,7 @@ let mockUsers: User[] = [
     email: 'zhoujiu@example.com',
     role: 'editor',
     status: 'inactive',
+    permissions: ['read', 'write'],
     createdAt: '2024-01-21 11:20:00',
     updatedAt: '2024-01-21 11:20:00'
   },
@@ -100,6 +108,7 @@ let mockUsers: User[] = [
     email: 'wushi@example.com',
     role: 'viewer',
     status: 'active',
+    permissions: ['read'],
     createdAt: '2024-01-22 09:30:00',
     updatedAt: '2024-01-23 10:15:00'
   }

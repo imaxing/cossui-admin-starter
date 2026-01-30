@@ -1,5 +1,9 @@
 import * as LucideIcons from 'lucide-react'
-import type { MenuItem, BreadcrumbItem, LinkComponentProps } from '../layouts/types'
+import type {
+  MenuItem,
+  BreadcrumbItem,
+  LinkComponentProps
+} from '../layouts/types'
 
 /**
  * 图标映射函数
@@ -68,7 +72,7 @@ export interface RawMenuItem {
 }
 
 /**
- * 将 MenuItem 类型映射为 koala 的 MenuItem 类型
+ * 将 MenuItem 类型映射为 cat 的 MenuItem 类型
  */
 export function mapMenuItems(items: RawMenuItem[]): MenuItem[] {
   return items.map((item) => ({

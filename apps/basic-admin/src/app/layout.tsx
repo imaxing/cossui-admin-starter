@@ -1,7 +1,7 @@
 'use client'
 
-import '@koala/uikit/globals.css'
-import { RootLayout as BaseRootLayout } from '@koala/uikit'
+import '@cat/uikit/globals.css'
+import { RootLayout as BaseRootLayout } from '@cat/uikit'
 
 export default function RootLayout({
   children
